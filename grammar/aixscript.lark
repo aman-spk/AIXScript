@@ -1,0 +1,72 @@
+// AIXScript Grammar Definition
+// A Domain-Specific Language for Machine Learning Experimentation
+// Parser: Lark (Earley)
+
+start: (statement NEWLINE*)* statement?
+
+statement: load_stmt
+         | target_stmt
+         | split_stmt
+         | model_stmt
+         | train_stmt
+         | evaluate_stmt
+         | compare_stmt
+         | show_best_stmt
+         | save_results_stmt
+         | show_dataset_info_stmt
+         | show_head_stmt
+         | comment
+
+// --- Data Loading ---
+load_stmt: "LOAD" FILEPATH
+
+// --- Target Variable ---
+target_stmt: "TARGET" IDENTIFIER
+
+// --- Train/Test Split ---
+split_stmt: "SPLIT" NUMBER NUMBER
+
+// --- Single Model Selection ---
+model_stmt: "MODEL" MODEL_NAME
+
+// --- Training ---
+train_stmt: "TRAIN"
+
+// --- Evaluation ---
+evaluate_stmt: "EVALUATE" METRIC_NAME
+
+// --- Model Comparison ---
+compare_stmt: "COMPARE" (NEWLINE+ MODEL_NAME)+
+
+// --- Show Best Model ---
+show_best_stmt: "SHOW_BEST"
+
+// --- Save Results ---
+save_results_stmt: "SAVE_RESULTS" FILEPATH
+
+// --- Dataset Inspection ---
+show_dataset_info_stmt: "SHOW_DATASET_INFO"
+show_head_stmt: "SHOW_HEAD" NUMBER
+
+// --- Comments ---
+comment: COMMENT
+
+// --- Terminals ---
+MODEL_NAME: "RandomForest"
+           | "DecisionTree"
+           | "KNN"
+           | "LogisticRegression"
+           | "SVM"
+
+METRIC_NAME: "accuracy"
+           | "precision"
+           | "recall"
+           | "f1"
+
+FILEPATH: /[a-zA-Z0-9_\/\.\-]+/
+IDENTIFIER: /[a-zA-Z_][a-zA-Z0-9_]*/
+NUMBER: /[0-9]+/
+COMMENT: /#[^\n]*/
+
+%import common.NEWLINE
+%ignore /[ \t]+/
