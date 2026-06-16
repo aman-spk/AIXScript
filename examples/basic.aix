@@ -1,0 +1,22 @@
+# Load the classic Iris dataset
+LOAD data/iris.csv
+
+# Set the target column
+TARGET species
+
+# Show dataset info
+SHOW_DATASET_INFO
+SHOW_HEAD 5
+
+# Split into 80% train / 20% test
+SPLIT 80 20
+
+# Select and train a Random Forest model
+MODEL RandomForest
+TRAIN
+
+# Evaluate the model
+EVALUATE accuracy
+
+# Save results
+SAVE_RESULTS outputs/basic_results.csv

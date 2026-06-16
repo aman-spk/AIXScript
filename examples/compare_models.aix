@@ -1,0 +1,20 @@
+# Compare multiple models on the Iris dataset
+LOAD data/iris.csv
+
+TARGET species
+
+SHOW_DATASET_INFO
+
+SPLIT 80 20
+
+# Compare three classifiers
+COMPARE
+    RandomForest
+    DecisionTree
+    KNN
+
+EVALUATE accuracy
+
+SHOW_BEST
+
+SAVE_RESULTS outputs/comparison_results.csv
