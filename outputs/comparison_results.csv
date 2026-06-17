@@ -1,0 +1,4 @@
+model,metric,score
+RandomForest,accuracy,1.0
+DecisionTree,accuracy,1.0
+KNN,accuracy,1.0
