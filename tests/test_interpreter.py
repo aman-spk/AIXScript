@@ -9,6 +9,7 @@ experiment context.
 from __future__ import annotations
 
 import os
+# pyrefly: ignore [missing-import]
 import pytest
 import pandas as pd
 

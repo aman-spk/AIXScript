@@ -12,6 +12,7 @@ import os
 from pathlib import Path
 from typing import Union
 
+# pyrefly: ignore [missing-import]
 from lark import Lark, Tree
 
 

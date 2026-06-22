@@ -7,7 +7,9 @@ AIXScript source code into parse trees.
 
 from __future__ import annotations
 
+# pyrefly: ignore [missing-import]
 import pytest
+# pyrefly: ignore [missing-import]
 from lark import Tree
 
 from src.parser import parse_script

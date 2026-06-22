@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
+# pyrefly: ignore [missing-import]
 import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier

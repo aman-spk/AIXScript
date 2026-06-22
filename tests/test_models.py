@@ -7,8 +7,10 @@ on sample data, and computes evaluation metrics.
 
 from __future__ import annotations
 
+# pyrefly: ignore [missing-import]
 import pytest
 import pandas as pd
+# pyrefly: ignore [missing-import]
 import numpy as np
 from sklearn.datasets import load_iris
 

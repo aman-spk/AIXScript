@@ -10,6 +10,7 @@ from __future__ import annotations
 
 from typing import List
 
+# pyrefly: ignore [missing-import]
 from lark import Transformer, Token, Tree
 
 from src.ast_nodes import (
