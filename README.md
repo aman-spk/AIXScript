@@ -20,6 +20,7 @@
 - [What is a DSL?](#what-is-a-dsl)
 - [Why AIXScript?](#why-aixscript)
 - [Architecture](#architecture)
+  - [Command Execution Workflows](#command-execution-workflows)
 - [Grammar Overview](#grammar-overview)
 - [Supported Commands](#supported-commands)
 - [Supported Models](#supported-models)
@@ -149,6 +150,30 @@ Makefile (build systems).
 ```
 
 Detailed architecture documentation: [`docs/architecture.md`](docs/architecture.md)
+
+### Command Execution Workflows
+
+To understand the parsing and workflow pipeline better, here is how two core commands (`LOAD` and `SPLIT`) flow through the architecture:
+
+#### `LOAD` Command Workflow Example
+
+| Step | Component | File & Symbol | Responsibility |
+| :--- | :--- | :--- | :--- |
+| **1. Parse** | Grammar definition | [`grammar/aixscript.lark:L21`](grammar/aixscript.lark#L21)<br>`load_stmt: "LOAD" FILEPATH` | Defines the syntax of the load command. |
+| **2. Construct Node** | AST definition | [`src/ast_nodes.py:L30-L38`](src/ast_nodes.py#L30-L38)<br>`LoadNode` | A simple data container holding the parsed `filepath` string. |
+| **3. Transform** | Tree Transformer | [`src/transformer.py:L60-L63`](src/transformer.py#L60-L63)<br>`load_stmt(items)` | Receives parsed tokens and instantiates `LoadNode(filepath=...)`. |
+| **4. Execute** | AST Interpreter | [`src/interpreter.py:L77-L78`](src/interpreter.py#L77-L78)<br>`_exec_LoadNode(node)` | Calls `ml_engine.load_dataset()` and assigns the result to `self.ctx.dataset`. |
+| **5. Load File** | ML Engine | [`src/ml_engine.py:L68-L88`](src/ml_engine.py#L68-L88)<br>`load_dataset(filepath)` | Reads the CSV file using `pandas.read_csv()` and returns a `pd.DataFrame`. |
+
+#### `SPLIT` Command Workflow Example
+
+| Step | Component | File & Symbol | Responsibility |
+| :--- | :--- | :--- | :--- |
+| **1. Parse** | Grammar definition | [`grammar/aixscript.lark:L27`](grammar/aixscript.lark#L27)<br>`split_stmt: "SPLIT" NUMBER NUMBER` | Standardizes split inputs into two numeric terminals. |
+| **2. Construct Node** | AST definition | [`src/ast_nodes.py:L53-L62`](src/ast_nodes.py#L53-L62)<br>`SplitNode` | A dataclass containing properties `train_pct` and `test_pct`. |
+| **3. Transform** | Tree Transformer | [`src/transformer.py:L70-L74`](src/transformer.py#L70-L74)<br>`split_stmt(items)` | Converts Lark raw string numbers to integers and creates a `SplitNode`. |
+| **4. Route** | AST Interpreter | [`src/interpreter.py:L92-L95`](src/interpreter.py#L92-L95)<br>`_exec_SplitNode(node)` | Sets `train_pct` and `test_pct` inside `self.ctx` and fires `ml_engine.split_data()`. |
+| **5. Partition** | ML Engine | [`src/ml_engine.py:L91-L133`](src/ml_engine.py#L91-L133)<br>`split_data(ctx)` | Pulls target data column, performs Label Encoding if needed, runs `train_test_split()`, and populates `X_train`, `X_test`, `y_train`, and `y_test` in the context. |
 
 ---
 
