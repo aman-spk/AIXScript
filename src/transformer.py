@@ -17,6 +17,7 @@ from src.ast_nodes import (
     ASTNode,
     CommentNode,
     CompareNode,
+    CrossValidateNode,
     EvaluateNode,
     LoadNode,
     ModelNode,
@@ -109,6 +110,11 @@ class AIXScriptTransformer(Transformer):  # type: ignore[type-arg]
         """Handle ``SHOW_HEAD <rows>``."""
         rows = int(items[0])
         return ShowHeadNode(rows=rows)
+
+    def cross_validate_stmt(self, items: list) -> CrossValidateNode:
+        """Handle ``CROSS_VALIDATE <k>``."""
+        k = int(items[0])
+        return CrossValidateNode(k=k)
 
     def comment(self, items: list) -> CommentNode:
         """Handle comment lines (``# …``)."""

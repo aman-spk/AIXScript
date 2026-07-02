@@ -188,6 +188,21 @@ SHOW_HEAD 5
 
 ---
 
+### `CROSS_VALIDATE <k>`
+
+Perform k-fold cross-validation on the selected model.
+
+```
+CROSS_VALIDATE 5
+```
+
+* Must appear after `LOAD`, `TARGET`, and `MODEL`.
+* If a data split (`SPLIT`) has been run, cross-validation is performed on the training split to keep the test split isolated.
+* If no split has been run, cross-validation is performed on the full dataset (non-numeric target columns are automatically label-encoded).
+* Records the mean score in the results list under the metric name `cv_<k>_fold_accuracy`.
+
+---
+
 ## Comments
 
 Lines starting with `#` are comments and are ignored during execution.

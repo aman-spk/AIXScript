@@ -14,6 +14,7 @@ from src.ast_nodes import (
     ASTNode,
     CommentNode,
     CompareNode,
+    CrossValidateNode,
     EvaluateNode,
     LoadNode,
     ModelNode,
@@ -130,6 +131,15 @@ class Interpreter:
 
     def _exec_ShowHeadNode(self, node: ShowHeadNode) -> None:
         show_head(self.ctx, node.rows)
+
+    def _exec_CrossValidateNode(self, node: CrossValidateNode) -> None:
+        if not self.ctx.has_dataset():
+            raise RuntimeError("No dataset loaded. Use LOAD first.")
+        if not self.ctx.has_target():
+            raise RuntimeError("No target column set. Use TARGET first.")
+        if self.ctx.current_model_name is None:
+            raise RuntimeError("No model selected. Use MODEL first.")
+        ml_engine.cross_validate_model(self.ctx, node.k)
 
     def _exec_CommentNode(self, _node: CommentNode) -> None:
         # Comments are no-ops at runtime.

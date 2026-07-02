@@ -123,6 +123,7 @@ This module is intentionally **stateless** — all mutable state lives on the
 | `evaluate_model`  | Score a model with a given metric           |
 | `show_best`       | Pick the model with the highest score       |
 | `save_results`    | Write results to a CSV file                 |
+| `cross_validate_model` | Perform k-fold cross-validation on the model |
 
 ---
 

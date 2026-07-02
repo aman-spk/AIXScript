@@ -15,6 +15,7 @@ statement: load_stmt
          | save_results_stmt
          | show_dataset_info_stmt
          | show_head_stmt
+         | cross_validate_stmt
          | comment
 
 // --- Data Loading ---
@@ -47,6 +48,9 @@ save_results_stmt: "SAVE_RESULTS" FILEPATH
 // --- Dataset Inspection ---
 show_dataset_info_stmt: "SHOW_DATASET_INFO"
 show_head_stmt: "SHOW_HEAD" NUMBER
+
+// --- Cross-Validation ---
+cross_validate_stmt: "CROSS_VALIDATE" NUMBER
 
 // --- Comments ---
 comment: COMMENT

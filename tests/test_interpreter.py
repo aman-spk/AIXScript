@@ -96,6 +96,32 @@ class TestInterpreterBasic:
         ctx = _run_script(script)
         assert ctx.has_dataset()
 
+    def test_cross_validate_with_split(self) -> None:
+        script = (
+            "LOAD data/iris.csv\n"
+            "TARGET species\n"
+            "SPLIT 80 20\n"
+            "MODEL RandomForest\n"
+            "CROSS_VALIDATE 3\n"
+        )
+        ctx = _run_script(script)
+        assert len(ctx.results) == 1
+        assert ctx.results[0]["metric"] == "cv_3_fold_accuracy"
+        assert 0.0 <= ctx.results[0]["score"] <= 1.0
+
+    def test_cross_validate_without_split(self) -> None:
+        script = (
+            "LOAD data/iris.csv\n"
+            "TARGET species\n"
+            "MODEL RandomForest\n"
+            "CROSS_VALIDATE 3\n"
+        )
+        ctx = _run_script(script)
+        assert len(ctx.results) == 1
+        assert ctx.results[0]["metric"] == "cv_3_fold_accuracy"
+        assert 0.0 <= ctx.results[0]["score"] <= 1.0
+
+
 
 class TestInterpreterErrors:
     """Test interpreter error handling."""
@@ -135,6 +161,19 @@ class TestInterpreterErrors:
     def test_invalid_target_column(self) -> None:
         with pytest.raises(RuntimeError, match="not found"):
             _run_script("LOAD data/iris.csv\nTARGET nonexistent_column")
+
+    def test_cv_before_load(self) -> None:
+        with pytest.raises(RuntimeError, match="No dataset loaded"):
+            _run_script("CROSS_VALIDATE 5")
+
+    def test_cv_before_target(self) -> None:
+        with pytest.raises(RuntimeError, match="No target column set"):
+            _run_script("LOAD data/iris.csv\nCROSS_VALIDATE 5")
+
+    def test_cv_before_model(self) -> None:
+        with pytest.raises(RuntimeError, match="No model selected"):
+            _run_script("LOAD data/iris.csv\nTARGET species\nCROSS_VALIDATE 5")
+
 
 
 class TestInterpreterComments:

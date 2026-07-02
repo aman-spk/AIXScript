@@ -18,7 +18,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn.metrics import (
     accuracy_score,
     precision_score,
@@ -267,3 +267,49 @@ def save_results(ctx: ExperimentContext, filepath: str) -> None:
 
     df.to_csv(filepath, index=False)
     print(f"[AIXScript] Results saved to '{filepath}'.")
+
+
+def cross_validate_model(ctx: ExperimentContext, k: int) -> None:
+    """Perform k-fold cross-validation on the selected model and print/store results.
+
+    Args:
+        ctx: The experiment context.
+        k:   Number of folds.
+    """
+    if ctx.current_model_name is None:
+        raise RuntimeError("No model selected. Use MODEL first.")
+
+    # Get unfitted model
+    model = get_model(ctx.current_model_name)
+
+    if ctx.has_split():
+        X = ctx.X_train
+        y = ctx.y_train
+        data_source = "training split"
+    else:
+        assert ctx.dataset is not None
+        assert ctx.target_column is not None
+        X = ctx.dataset.drop(columns=[ctx.target_column])
+        y = ctx.dataset[ctx.target_column]
+        if y.dtype == object:
+            le = LabelEncoder()
+            y = pd.Series(le.fit_transform(y), name=y.name)
+        data_source = "full dataset"
+
+    print(f"[AIXScript] Performing {k}-fold cross-validation on {ctx.current_model_name} using the {data_source}...")
+
+    scores = cross_val_score(model, X, y, cv=k)
+    mean_score = float(np.mean(scores))
+    std_score = float(np.std(scores))
+
+    formatted_scores = [round(float(s), 4) for s in scores]
+    print(f"[AIXScript] Fold scores: {formatted_scores}")
+    print(f"[AIXScript] Mean accuracy: {mean_score:.4f} (std: {std_score:.4f})")
+
+    metric_name = f"cv_{k}_fold_accuracy"
+    ctx.results.append({
+        "model": ctx.current_model_name,
+        "metric": metric_name,
+        "score": round(mean_score, 4)
+    })
+

@@ -205,6 +205,7 @@ using the Lark EBNF format.  Key design decisions:
 | `SAVE_RESULTS <file>`            | Export results to CSV                    |
 | `SHOW_DATASET_INFO`              | Print dataset summary statistics         |
 | `SHOW_HEAD <n>`                  | Print the first *n* rows                 |
+| `CROSS_VALIDATE <k>`             | Perform k-fold cross-validation          |
 
 Full language specification: [`docs/language_spec.md`](docs/language_spec.md)
 
@@ -429,7 +430,6 @@ $ python main.py examples/compare_models.aix
 
 - **Regression support** — extend to regression tasks with metrics like RMSE and MAE.
 - **Hyperparameter tuning** — add `TUNE` command with grid/random search.
-- **Cross-validation** — add `CROSS_VALIDATE k` command.
 - **Data preprocessing** — `NORMALIZE`, `FILL_MISSING`, `ENCODE` commands.
 - **Visualization** — `PLOT confusion_matrix`, `PLOT feature_importance`.
 - **Custom models** — allow users to register Python classes as named models.

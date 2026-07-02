@@ -22,6 +22,7 @@ from src.ast_nodes import (
     TrainNode,
     EvaluateNode,
     CompareNode,
+    CrossValidateNode,
     ShowBestNode,
     SaveResultsNode,
     ShowDatasetInfoNode,
@@ -77,6 +78,10 @@ class TestParserBasic:
 
     def test_parse_comment(self) -> None:
         tree = parse_script("# This is a comment")
+        assert isinstance(tree, Tree)
+
+    def test_parse_cross_validate(self) -> None:
+        tree = parse_script("CROSS_VALIDATE 5")
         assert isinstance(tree, Tree)
 
 
@@ -157,6 +162,12 @@ class TestParserTransform:
         prog = self._transform("# hello world")
         node = prog.statements[0]
         assert isinstance(node, CommentNode)
+
+    def test_transform_cross_validate(self) -> None:
+        prog = self._transform("CROSS_VALIDATE 5")
+        node = prog.statements[0]
+        assert isinstance(node, CrossValidateNode)
+        assert node.k == 5
 
 
 class TestParserMultiline:

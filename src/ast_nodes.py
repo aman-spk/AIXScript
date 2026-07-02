@@ -139,6 +139,17 @@ class ShowHeadNode(ASTNode):
 
 
 @dataclass
+class CrossValidateNode(ASTNode):
+    """Represents a ``CROSS_VALIDATE <k>`` command.
+
+    Attributes:
+        k: Number of folds for cross validation.
+    """
+
+    k: int
+
+
+@dataclass
 class CommentNode(ASTNode):
     """Represents a comment line (ignored during interpretation).
 
